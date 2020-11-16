@@ -16,6 +16,7 @@ import (
 
 var (
 	listeningAddr = ""
+	metricsPath   = ""
 	authUrl       = ""
 	rateLimitUrl  = ""
 )
@@ -25,6 +26,10 @@ func main() {
 		"addr",
 		"0.0.0.0:8080",
 		"HTTP Server address")
+	flag.StringVar(&metricsPath,
+		"metrics-path",
+		"/metrics",
+		"Metrics URL path")
 	flag.StringVar(&authUrl,
 		"auth-url",
 		"https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull",
@@ -38,7 +43,7 @@ func main() {
 	log.Println("Starting Dockerhub exporter.")
 	log.Println("Listening on:", "'"+listeningAddr+"'")
 
-	http.HandleFunc("/", rateLimitQueryFunc)
+	http.HandleFunc(metricsPath, rateLimitQueryFunc)
 	http.ListenAndServe(listeningAddr, nil)
 }
 
